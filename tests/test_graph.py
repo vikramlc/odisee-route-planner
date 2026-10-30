@@ -42,3 +42,12 @@ def test_zero_minute_road():
     g = RoadGraph()
     g.add_road("a", "b", 0)
     assert shortest_time(g, "a", "b") == 0
+
+
+def test_detour_through_intermediate_stop():
+    g = RoadGraph()
+    g.add_road("depot", "a", 10)
+    g.add_road("depot", "b", 1)
+    g.add_road("b", "a", 1)
+    g.add_road("a", "market", 1)
+    assert shortest_time(g, "depot", "market") == 3

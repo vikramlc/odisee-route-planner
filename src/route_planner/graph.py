@@ -31,15 +31,17 @@ def shortest_time(graph: RoadGraph, source: str, target: str) -> int | None:
     """Minimum travel minutes from source to target, or None when unreachable."""
     if source == target:
         return 0
-    visited = {source}
+    best: dict[str, int] = {source: 0}
     heap: list[tuple[int, str]] = [(0, source)]
     while heap:
         time, node = heapq.heappop(heap)
+        if time > best[node]:
+            continue  # stale entry: a faster path to node was already settled
         if node == target:
             return time
         for nxt, minutes in graph.neighbors(node):
-            if nxt in visited:
-                continue
-            visited.add(nxt)
-            heapq.heappush(heap, (time + minutes, nxt))
+            candidate = time + minutes
+            if candidate < best.get(nxt, candidate + 1):
+                best[nxt] = candidate
+                heapq.heappush(heap, (candidate, nxt))
     return None
